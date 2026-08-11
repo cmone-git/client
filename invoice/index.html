@@ -6,8 +6,8 @@
     <title>View Invoice - CM FILINGS</title>
     
     <!-- PWA & Favicon Assets -->
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/png" href="../logo.png">
+    <link rel="apple-touch-icon" href="../logo.png">
     <meta name="theme-color" content="#071D49">
 
     <!-- Google Fonts: Inter -->
@@ -21,7 +21,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- html2canvas and jsPDF for Invoice Rendering -->
+    <!-- html2canvas and jsPDF for Invoice Downloading -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -34,7 +34,6 @@
                         brand: {
                             red: '#B10000',
                             navy: '#071D49',
-                            navyhover: '#102a5c',
                             light: '#F4F5F7',
                         }
                     },
@@ -85,19 +84,16 @@
             </div>
             
             <div class="flex items-center gap-3 w-full sm:w-auto">
-                <!-- Download QR Button -->
                 <button id="btn-download-qr" class="flex-1 sm:flex-none py-2.5 px-4 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 text-xs">
-                    <i data-lucide="qr-code" class="w-4 h-4 text-brand-navy"></i> Download QR
+                    <i data-lucide="image" class="w-4 h-4 text-brand-navy"></i> Download JPEG
                 </button>
-                
-                <!-- Download PDF Button -->
                 <button id="btn-download-pdf" class="flex-1 sm:flex-none py-2.5 px-6 bg-brand-red text-white font-bold rounded-xl shadow-md hover:bg-[#8A0000] transition-colors flex items-center justify-center gap-2 text-xs">
                     <i data-lucide="download" class="w-4 h-4"></i> Download PDF
                 </button>
             </div>
         </div>
 
-        <!-- THE INVOICE CARD (For Render) -->
+        <!-- THE INVOICE CARD -->
         <div id="invoice-render-target" class="invoice-paper rounded-2xl border border-slate-200 p-8 md:p-12 relative overflow-hidden bg-white w-full">
             <div class="absolute top-0 left-0 w-full h-2 bg-brand-red"></div>
             
@@ -157,14 +153,14 @@
             </div>
 
             <!-- Payment QR Footer -->
-            <div class="bg-brand-light border border-slate-200 rounded-2xl p-6 flex items-center justify-between">
-                <div>
-                    <h4 class="text-sm font-bold text-brand-navy uppercase tracking-widest mb-1.5 flex items-center gap-2"><i data-lucide="qr-code" class="w-5 h-5 text-brand-red"></i> Scan to Pay</h4>
+            <div class="bg-brand-light border border-slate-200 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div class="text-center sm:text-left">
+                    <h4 class="text-sm font-bold text-brand-navy uppercase tracking-widest mb-1.5 flex items-center justify-center sm:justify-start gap-2"><i data-lucide="qr-code" class="w-5 h-5 text-brand-red"></i> Scan to Pay</h4>
                     <p class="text-xs font-medium text-slate-500 mb-4">Scan using any UPI Application (GPay, PhonePe, Paytm).</p>
                     <p class="text-sm font-bold text-slate-700">UPI ID: <span class="font-mono text-brand-red">cmfilings@upi</span></p>
                 </div>
                 <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm shrink-0">
-                    <img id="render-qr" src="" alt="Payment QR" class="w-24 h-24 object-contain">
+                    <img id="render-qr" src="" alt="Payment QR" class="w-32 h-32 object-contain">
                 </div>
             </div>
             
@@ -213,16 +209,14 @@
         const renderQr = document.getElementById('render-qr');
         
         const btnDownloadPdf = document.getElementById('btn-download-pdf');
-        const btnDownloadQr = document.getElementById('btn-download-qr');
+        const btnDownloadQr = document.getElementById('btn-download-qr'); // Now functioning as JPEG download
         const invoiceRenderTarget = document.getElementById('invoice-render-target');
 
-        let qrImageUrl = "";
-        let invoiceFileName = "Invoice.pdf";
+        let invoiceFileName = "Invoice";
 
         // ==========================================
         // FETCH INVOICE DATA
         // ==========================================
-        // Look for URL parameter (e.g. ?id=PI-110826-XXXXX)
         const urlParams = new URLSearchParams(window.location.search);
         const docId = urlParams.get('id');
 
@@ -284,25 +278,28 @@
             const transactionNote = encodeURIComponent(`Inv: ${data.invoiceNo}`);
             const upiString = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${data.amount}&tr=${data.invoiceNo}&cu=INR&tn=${transactionNote}`;
             
-            qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(upiString)}&margin=10`;
-            renderQr.src = qrImageUrl;
+            renderQr.src = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(upiString)}&margin=10`;
         }
 
         // ==========================================
-        // DOWNLOAD PDF LOGIC
+        // DOWNLOAD LOGIC (html2canvas)
         // ==========================================
+        async function getCanvas() {
+            return await html2canvas(invoiceRenderTarget, {
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: "#ffffff"
+            });
+        }
+
+        // Download as PDF
         btnDownloadPdf.addEventListener('click', async () => {
             const originalHtml = btnDownloadPdf.innerHTML;
             btnDownloadPdf.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Preparing...`;
             lucide.createIcons();
 
             try {
-                const canvas = await html2canvas(invoiceRenderTarget, {
-                    scale: 2, 
-                    useCORS: true,
-                    backgroundColor: "#ffffff"
-                });
-                
+                const canvas = await getCanvas();
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF('p', 'mm', 'a4');
                 const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -312,41 +309,30 @@
 
                 pdf.addImage(imgData, 'PNG', 10, 10, paddedWidth, pdfHeight);
                 pdf.save(`${invoiceFileName}.pdf`);
-                
             } catch (err) {
                 console.error("PDF Error:", err);
-                alert("Could not generate PDF. Please ensure your connection is stable.");
+                alert("Could not generate PDF. Please try again.");
             } finally {
                 btnDownloadPdf.innerHTML = originalHtml;
                 lucide.createIcons();
             }
         });
 
-        // ==========================================
-        // DOWNLOAD QR AS JPEG
-        // ==========================================
+        // Download as JPEG
         btnDownloadQr.addEventListener('click', async () => {
             const originalHtml = btnDownloadQr.innerHTML;
             btnDownloadQr.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Fetching...`;
             lucide.createIcons();
 
             try {
-                // Fetch the image from the API as a blob to bypass browser download restrictions
-                const response = await fetch(qrImageUrl);
-                const blob = await response.blob();
-                const blobUrl = window.URL.createObjectURL(blob);
-                
+                const canvas = await getCanvas();
                 const link = document.createElement('a');
-                link.href = blobUrl;
-                link.download = `QR_${invoiceFileName}.jpg`;
-                document.body.appendChild(link);
+                link.download = `${invoiceFileName}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.9); // Save as high quality JPG
                 link.click();
-                document.body.removeChild(link);
-                
-                window.URL.revokeObjectURL(blobUrl);
             } catch (err) {
-                console.error("QR Download Error:", err);
-                alert("Failed to download QR image.");
+                console.error("JPEG Download Error:", err);
+                alert("Failed to download image.");
             } finally {
                 btnDownloadQr.innerHTML = originalHtml;
                 lucide.createIcons();
