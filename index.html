@@ -174,11 +174,10 @@ a{
     pointer-events:none;
 }
 
-.brand-logo{
-    display:flex;
-    align-items:center;
-    gap:11px;
-    color:var(--navy-900);
+.brand-logo,
+.header-actions{
+    position:relative;
+    z-index:2;
 }
 
 .brand-mark{
@@ -1302,7 +1301,7 @@ function toggleQRBox() {
 function openRazorpayGateway() {
     const pkg = appState.currentBooking;
     var options = {
-        "key": "rzp_test_inspirego_key",
+        "key": "https://razorpay.me/cmfilings",
         "amount": (pkg.price || 2500) * 100,
         "currency": "AED",
         "name": "InspireGo Travel & Tourism",
