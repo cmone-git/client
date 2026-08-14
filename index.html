@@ -112,24 +112,17 @@ a{
     position:relative;
     z-index:1000;
 
-    /* PREMIUM GLASS */
-    background:rgba(255,255,255,.58);
+    background:rgba(255,255,255,.94);
 
-    -webkit-backdrop-filter:
-        blur(24px)
-        saturate(180%);
+    -webkit-backdrop-filter:blur(22px) saturate(180%);
+    backdrop-filter:blur(22px) saturate(180%);
 
-    backdrop-filter:
-        blur(24px)
-        saturate(180%);
+    border-bottom:1px solid rgba(226,234,242,.85);
 
-    /* Glass edge */
-    border-bottom:1px solid rgba(255,255,255,.75);
-
-    /* Depth */
+    /* Small premium shadow */
     box-shadow:
-        0 8px 30px rgba(7,26,51,.08),
-        0 1px 0 rgba(255,255,255,.75) inset;
+        0 4px 14px rgba(7,26,51,.07),
+        0 1px 0 rgba(255,255,255,.95) inset;
 }
 
 /* Subtle light reflection */
@@ -174,8 +167,20 @@ a{
     pointer-events:none;
 }
 
-.brand-logo,
+.brand-logo{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    color:var(--navy-900);
+    position:relative;
+    z-index:2;
+    min-width:0;
+}
+
 .header-actions{
+    display:flex;
+    align-items:center;
+    gap:8px;
     position:relative;
     z-index:2;
 }
@@ -183,7 +188,8 @@ a{
 .brand-mark{
     width:40px;
     height:40px;
-    border-radius:13px;
+    min-width:40px;
+    border-radius:12px;
 
     display:flex;
     align-items:center;
@@ -194,10 +200,14 @@ a{
     background:
         linear-gradient(
             135deg,
-            rgba(7,26,51,.95),
-            rgba(22,119,255,.95),
-            rgba(56,189,248,.95)
+            #071A33,
+            #1677FF
         );
+
+    box-shadow:
+        0 5px 14px rgba(22,119,255,.18),
+        inset 0 1px 0 rgba(255,255,255,.35);
+}
 
     box-shadow:
         0 8px 20px rgba(22,119,255,.22),
