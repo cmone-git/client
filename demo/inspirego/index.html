@@ -14,7 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
 :root{
     --navy-950:#061326;
@@ -837,19 +837,31 @@ a{
 
             <!-- Team Assistance CTA (Call & WhatsApp Icons, No Number) -->
             <div class="consult-box">
-                <div>
-                    <div class="consult-title">Need Assistance?</div>
-                    <div class="consult-number">Chat with us & Call us</div>
-                </div>
-                <div class="contact-actions">
-                    <button class="action-icon-btn call-btn" onclick="window.location.href='tel:+9715444385234'" title="Call Us">
-                        <i class="fa-solid fa-phone"></i>
-                    </button>
-                    <a class="action-icon-btn whatsapp-icon-btn" href="https://wa.me/9715444385234" target="_blank" rel="noopener" title="WhatsApp Chat">
-                        <i class="fa-brands fa-whatsapp"></i>
-                    </a>
-                </div>
-            </div>
+    <div>
+        <div class="consult-title">Need Assistance?</div>
+        <div class="consult-number">We're here to help</div>
+    </div>
+
+    <div class="contact-actions">
+
+        <button
+            class="action-icon-btn call-btn"
+            onclick="window.location.href='tel:+9715444385234'"
+            title="Call">
+            <i data-lucide="phone"></i>
+        </button>
+
+        <a
+            class="action-icon-btn whatsapp-icon-btn"
+            href="https://wa.me/9715444385234"
+            target="_blank"
+            rel="noopener"
+            title="WhatsApp">
+            <i data-lucide="message-circle"></i>
+        </a>
+
+    </div>
+</div>
 
             <!-- Quick Modules -->
             <div class="quick-grid">
